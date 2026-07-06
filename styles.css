@@ -3,29 +3,9 @@
    Palette + type lifted 1:1 from the live site's theme CSS.
    ============================================================ */
 
-/* Gopher — same Adobe/Typekit files the Squarespace site loads.
-   When you leave Squarespace for good, add your own Adobe Fonts
-   web project (Gopher, 400/500/700) and swap these URLs. */
-@font-face {
-  font-family: "gopher";
-  src: url("https://use.typekit.net/af/0a837c/00000000000000007735cb08/31/l?subset_id=2&fvd=n4&v=3") format("woff2");
-  font-weight: 400; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: "gopher";
-  src: url("https://use.typekit.net/af/7d6e5b/00000000000000007735cb0c/31/l?subset_id=2&fvd=n5&v=3") format("woff2");
-  font-weight: 500; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: "gopher";
-  src: url("https://use.typekit.net/af/b3fd27/00000000000000007735cb0f/31/l?subset_id=2&fvd=n7&v=3") format("woff2");
-  font-weight: 700; font-style: normal; font-display: swap;
-}
-@font-face {
-  font-family: "gopher";
-  src: url("https://use.typekit.net/af/5bef7c/00000000000000007735cb0a/31/l?subset_id=2&fvd=i4&v=3") format("woff2");
-  font-weight: 400; font-style: italic; font-display: swap;
-}
+/* Fredoka via Google Fonts — free forever, no subscription.
+   Chosen as the closest free match to Gopher's rounded chunky look. */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500&display=swap');
 
 :root {
   --accent: hsl(16.6, 64.9%, 51.96%);       /* burnt orange */
@@ -35,7 +15,7 @@
   --white: #fff;
   --max-width: 1500px;
   --pad: max(2vw, 18px);
-  --font: "gopher", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font: "Fredoka", "gopher", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -52,7 +32,7 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1.2;
 }
@@ -75,7 +55,7 @@ section { padding: 6vw var(--pad); }
   background: var(--white);
 }
 .site-title {
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.04em;
   font-size: 1.5rem;
   color: var(--olive);
@@ -332,7 +312,7 @@ section { padding: 6vw var(--pad); }
   top: -0.9rem;
   left: 1.4rem;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 0.45rem 1rem;
@@ -406,7 +386,7 @@ section { padding: 6vw var(--pad); }
 }
 .marquee-track span {
   font-size: clamp(1.8rem, 3.5vw, 3.4rem);
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.04em;
   color: var(--pink);
 }
