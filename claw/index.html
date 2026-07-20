@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RaRa Land Arcade</title>
+<meta name="description" content="A fully playable portfolio. Drive the claw, win a project.">
+<link rel="icon" href="../assets/img/favicon.ico">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap');
+
+:root {
+  --accent: hsl(16.6, 64.9%, 51.96%);
+  --accent-dark: hsl(16.6, 64.9%, 42%);
+  --olive: hsl(78.26, 32.86%, 27.45%);
+  --olive-dark: hsl(78.26, 32.86%, 18%);
+  --pink: hsl(330, 60.98%, 83.92%);
+  --pink-deep: hsl(330, 55%, 74%);
+  --brown: hsl(31.2, 23.36%, 20.98%);
+  --white: #fff;
+  --font: "Fredoka", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font);
+  font-weight: 400;
+  color: var(--olive);
+  background: var(--brown);
+  overflow-x: hidden;
+}
+
+/* ---------- top bar ---------- */
+.bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  z-index: 40;
+  pointer-events: none;
+}
+.bar a {
+  pointer-events: auto;
+  color: var(--pink);
+  text-decoration: none;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-size: 1rem;
+  border: 2px solid var(--pink);
+  border-radius: 999px;
+  padding: 7px 18px;
+  transition: background .2s, color .2s;
+  background: rgba(0,0,0,.18);
+}
+.bar a:hover { background: var(--pink); color: var(--brown); }
+.bar .bar-right { display: flex; gap: 10px; }
+
+/* ---------- scene ---------- */
+.scene {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  background:
+    radial-gradient(120% 90% at 50% 0%, hsl(31.2, 23.36%, 27%) 0%, var(--brown) 60%),
+    var(--brown);
+  padding: 86px 12px 0;
+}
+
+.scene-kicker {
+  color: var(--pink);
+  font-size: clamp(.95rem, 1.6vw, 1.15rem);
+  margin-bottom: 6px;
+  opacity: .85;
+}
+.scene-title {
+  color: var(--white);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  text-align: center;
+  margin-bottom: 18px;
+}
+.scene-title .pink { color: var(--pink); }
+
+/* ---------- machine ---------- */
+.machine {
+  width: min(1240px, 100%);
+  border-radius: 26px 26px 0 0;
+  background: var(--accent);
+  box-shadow:
+    0 -8px 0 0 var(--accent-dark) inset,
+    0 30px 80px rgba(0,0,0,.5);
+  padding: 0 clamp(10px, 1.6vw, 22px);
+  position: relative;
+}
+
+/* marquee */
+.mq {
+  padding: clamp(12px, 1.8vw, 20px) 8px clamp(10px, 1.4vw, 16px);
+  text-align: center;
+  position: relative;
+}
+.mq h1 {
+  color: var(--white);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-size: clamp(1.7rem, 4.6vw, 3.2rem);
+  line-height: 1;
+  text-shadow: 0 3px 0 var(--accent-dark);
+}
+.mq h1 span { color: var(--pink); }
+.bulbs {
+  display: flex;
+  justify-content: center;
+  gap: clamp(10px, 1.8vw, 22px);
+  margin-top: clamp(8px, 1.2vw, 14px);
+}
+.bulb {
+  width: clamp(8px, 1vw, 12px);
+  height: clamp(8px, 1vw, 12px);
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 10px 2px hsla(330, 61%, 84%, .8);
+  animation: blink 1.1s steps(1) infinite;
+}
+.bulb:nth-child(even) { animation-delay: .55s; }
+@keyframes blink { 50% { opacity: .25; box-shadow: none; } }
+
+/* glass */
+.glass-frame {
+  border: clamp(8px, 1vw, 12px) solid var(--accent-dark);
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  background: var(--pink);
+}
+.glass {
+  position: relative;
+  height: clamp(380px, 52svh, 560px);
+  background:
+    linear-gradient(180deg, var(--pink) 0%, var(--pink-deep) 100%);
+  overflow: hidden;
+  touch-action: none;
+  cursor: crosshair;
+}
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0) 82%, rgba(0,0,0,.10) 100%),
+    linear-gradient(115deg, rgba(255,255,255,.28) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 68%, rgba(255,255,255,.14) 100%);
+  pointer-events: none;
+  z-index: 30;
+}
+.wall-word {
+  position: absolute;
+  top: 16%;
+  left: 0; right: 0;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-size: clamp(2rem, 6vw, 4.6rem);
+  color: hsl(330, 45%, 72%);
+  opacity: .55;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.wall-word small {
+  display: block;
+  font-size: .32em;
+  letter-spacing: .3em;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+/* track + rig */
+.track {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 14px;
+  background: var(--olive);
+  z-index: 5;
+}
+.rig {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  z-index: 6;
+  will-change: transform;
+}
+.trolley {
+  position: absolute;
+  top: -8px; left: -22px;
+  width: 44px; height: 16px;
+  border-radius: 6px;
+  background: var(--olive-dark);
+}
+.cable {
+  position: absolute;
+  top: 0; left: -1.5px;
+  width: 3px;
+  background: var(--olive-dark);
+  transform-origin: top center;
+}
+.claw {
+  position: absolute;
+  left: -50px;
+  width: 100px;
+  height: 84px;
+  transform-origin: 50% 8px;
+}
+.claw .prong {
+  transform-origin: 50px 16px;
+  transition: transform .18s ease;
+}
+.claw.open .prong-l { transform: rotate(24deg); }
+.claw.open .prong-r { transform: rotate(-24deg); }
+.claw.closed .prong-l { transform: rotate(-6deg); }
+.claw.closed .prong-r { transform: rotate(6deg); }
+
+/* prizes */
+.capsule {
+  position: absolute;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(0,0,0,.16);
+  box-shadow: 0 8px 14px rgba(0,0,0,.18), inset 0 6px 10px rgba(255,255,255,.5);
+  background: var(--white);
+  z-index: 3;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.capsule img {
+  width: 100%;
+  height: 72%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+.capsule .cap {
+  height: 28%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  letter-spacing: .01em;
+  color: var(--white);
+  font-size: .62em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.capsule.held { z-index: 8; box-shadow: 0 18px 26px rgba(0,0,0,.3); }
+.capsule.gone { display: none; }
+.capsule.me { border-color: var(--accent); }
+.capsule.me .cap { background: var(--accent); }
+
+/* chute */
+.chute {
+  position: absolute;
+  bottom: 0;
+  width: 108px;
+  height: 86px;
+  z-index: 4;
+  pointer-events: none;
+}
+.chute .hole {
+  position: absolute;
+  bottom: 0; left: 10px; right: 10px;
+  height: 56px;
+  background: var(--olive-dark);
+  border-radius: 14px 14px 0 0;
+  box-shadow: inset 0 10px 16px rgba(0,0,0,.55);
+}
+.chute .sign {
+  position: absolute;
+  top: -6px; left: 0; right: 0;
+  text-align: center;
+  color: var(--olive-dark);
+  font-weight: 600;
+  font-size: .7rem;
+  letter-spacing: .12em;
+}
+.chute .arrow {
+  position: absolute;
+  top: 12px; left: 0; right: 0;
+  text-align: center;
+  color: var(--olive-dark);
+  font-size: 1rem;
+  animation: bounce 1.2s ease-in-out infinite;
+}
+@keyframes bounce { 50% { transform: translateY(5px); } }
+
+/* toast */
+.toast {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  transform: translateX(-50%) scale(.9);
+  background: var(--white);
+  color: var(--olive);
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 12px 20px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.2);
+  opacity: 0;
+  transition: opacity .25s, transform .25s;
+  z-index: 35;
+  pointer-events: none;
+  text-align: center;
+  max-width: 84%;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) scale(1); }
+
+/* deck */
+.deck {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: clamp(12px, 1.6vw, 20px) clamp(6px, 1vw, 14px) clamp(16px, 2vw, 26px);
+}
+.counter {
+  background: var(--olive-dark);
+  color: var(--pink);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: clamp(.72rem, 1.3vw, .95rem);
+  letter-spacing: .14em;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,.6);
+  white-space: nowrap;
+}
+.counter b { color: var(--white); font-weight: 600; }
+.deck-mid {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 26px);
+}
+.stick {
+  width: 46px; height: 46px;
+  position: relative;
+  display: none;
+}
+@media (min-width: 640px) { .stick { display: block; } }
+.stick::before {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: 2px;
+  width: 8px; height: 30px;
+  background: var(--olive-dark);
+  transform: translateX(-50%);
+  border-radius: 4px;
+}
+.stick::after {
+  content: "";
+  position: absolute;
+  left: 50%; top: 0;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--pink), var(--pink-deep));
+  transform: translateX(-50%);
+  animation: waggle 2.4s ease-in-out infinite;
+  transform-origin: 50% 46px;
+}
+@keyframes waggle { 25% { transform: translateX(-50%) rotate(9deg); } 75% { transform: translateX(-50%) rotate(-9deg); } }
+
+.drop-btn {
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  letter-spacing: .06em;
+  color: var(--white);
+  background: radial-gradient(circle at 35% 28%, hsl(330, 61%, 88%), var(--pink-deep));
+  color: var(--brown);
+  border: none;
+  border-radius: 50%;
+  width: clamp(74px, 9vw, 96px);
+  height: clamp(74px, 9vw, 96px);
+  cursor: pointer;
+  box-shadow: 0 7px 0 hsl(330, 40%, 58%), 0 14px 24px rgba(0,0,0,.35);
+  transition: transform .08s, box-shadow .08s;
+}
+.drop-btn:active, .drop-btn.pressed {
+  transform: translateY(5px);
+  box-shadow: 0 2px 0 hsl(330, 40%, 58%), 0 6px 12px rgba(0,0,0,.3);
+}
+.hint {
+  color: var(--white);
+  opacity: .85;
+  font-size: clamp(.8rem, 1.4vw, .95rem);
+  max-width: 240px;
+  text-align: left;
+  display: none;
+}
+@media (min-width: 760px) { .hint { display: block; } }
+
+.coin {
+  background: var(--olive-dark);
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: var(--pink);
+  font-size: clamp(.72rem, 1.3vw, .95rem);
+  letter-spacing: .14em;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,.6);
+  border: none;
+  font-family: var(--font);
+  white-space: nowrap;
+}
+.coin .slot {
+  display: inline-block;
+  width: 4px; height: 14px;
+  background: var(--brown);
+  border-radius: 2px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.15);
+}
+.coin.blink { animation: blink 1s steps(1) infinite; }
+
+/* footnote */
+.footnote {
+  color: hsla(330, 61%, 84%, .6);
+  text-align: center;
+  font-size: .85rem;
+  padding: 18px 16px 26px;
+}
+.footnote a { color: var(--pink); }
+
+/* ---------- prize card ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 34, 25, .66);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+  padding: 18px;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+.card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: clamp(18px, 3vw, 30px);
+  width: min(430px, 100%);
+  text-align: center;
+  transform: translateY(26px) scale(.96);
+  transition: transform .3s cubic-bezier(.2, 1.4, .4, 1);
+  box-shadow: 0 30px 80px rgba(0,0,0,.4);
+}
+.overlay.show .card { transform: translateY(0) scale(1); }
+.card .won {
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  font-size: .8rem;
+}
+.card .media {
+  width: min(230px, 60vw);
+  margin: 14px auto;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 3px solid var(--pink);
+  aspect-ratio: 3 / 4;
+}
+.card .media.round { aspect-ratio: 1; border-radius: 50%; border-color: var(--accent); }
+.card .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card h2 {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: var(--olive);
+}
+.card p { color: var(--olive); opacity: .8; margin-top: 6px; font-size: 1rem; }
+.card .btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.btn {
+  font-family: var(--font);
+  font-weight: 500;
+  font-size: 1rem;
+  border-radius: 999px;
+  padding: 10px 24px;
+  cursor: pointer;
+  text-decoration: none;
+  border: 2px solid var(--olive);
+  color: var(--olive);
+  background: transparent;
+  transition: background .2s, color .2s;
+}
+.btn:hover { background: var(--olive); color: var(--white); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--white); }
+.btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bulb, .stick::after, .chute .arrow, .coin.blink { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="bar">
+  <a href="../">Creative Portfolio</a>
+  <div class="bar-right">
+    <a href="../#work-title" id="skipLink">Just show me the work</a>
+    <a href="../contact/">Contact</a>
+  </div>
+</nav>
+
+<div class="scene">
+  <p class="scene-kicker">Welcome to</p>
+  <h1 class="scene-title">RaRa Land<span class="pink">.</span> A portfolio you play<span class="pink">.</span></h1>
+
+  <div class="machine">
+    <div class="mq">
+      <h1>RARA <span>LAND</span></h1>
+      <div class="bulbs" id="bulbs"></div>
+    </div>
+
+    <div class="glass-frame">
+      <div class="glass" id="glass">
+        <div class="wall-word">Grab a project<small>Real work only</small></div>
+        <div class="track"></div>
+
+        <div class="rig" id="rig">
+          <div class="trolley"></div>
+          <div class="cable" id="cable"></div>
+          <svg class="claw open" id="claw" viewBox="0 0 100 84">
+            <rect x="45" y="0" width="10" height="14" rx="3" fill="hsl(78,33%,18%)"/>
+            <g class="prong prong-l">
+              <path d="M50 16 C 26 20, 16 40, 22 64 C 24 71, 30 74, 36 72" fill="none" stroke="hsl(78,33%,27%)" stroke-width="9" stroke-linecap="round"/>
+            </g>
+            <g class="prong prong-r">
+              <path d="M50 16 C 74 20, 84 40, 78 64 C 76 71, 70 74, 64 72" fill="none" stroke="hsl(78,33%,27%)" stroke-width="9" stroke-linecap="round"/>
+            </g>
+            <circle cx="50" cy="16" r="10" fill="hsl(78,33%,22%)"/>
+            <circle cx="47" cy="13" r="3" fill="hsl(78,20%,38%)"/>
+          </svg>
+        </div>
+
+        <div class="chute" id="chute">
+          <div class="sign">PRIZE</div>
+          <div class="arrow">▼</div>
+          <div class="hole"></div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+      </div>
+    </div>
+
+    <div class="deck">
+      <button class="coin blink" id="coin"><span class="slot"></span>Credits <b>∞</b></button>
+      <div class="deck-mid">
+        <div class="stick" aria-hidden="true"></div>
+        <button class="drop-btn" id="dropBtn">DROP</button>
+        <p class="hint" id="hint">Steer with your mouse or arrow keys. Hit DROP over a prize. Everything in there is real work.</p>
+      </div>
+      <div class="counter">Won <b id="wonCount">0</b> / <b id="totalCount">0</b></div>
+    </div>
+  </div>
+
+  <p class="footnote">You always win here. This is a portfolio, not Vegas. Somewhere in the pile is the person who made it. <a href="../">Classic version</a></p>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="card" id="card">
+    <p class="won" id="cardKicker">You won</p>
+    <div class="media" id="cardMedia"><img id="cardImg" src="" alt=""></div>
+    <h2 id="cardTitle"></h2>
+    <p id="cardDesc"></p>
+    <div class="btns">
+      <a class="btn primary" id="cardGo" href="#">See the work</a>
+      <button class="btn" id="cardBack">Put it back</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var PRIZES = [
+    { id: 'me', name: 'The Creator', img: '../assets/img/rania-face.png', href: '../contact/', cta: 'Hire her', kicker: 'Grand prize', desc: 'You got the girl who makes all of this. Strategy, creative direction, AI content. She is, conveniently, available.', me: true },
+    { id: 'unilever', name: 'Unilever', img: '../assets/img/unilever.webp', href: '../unilever/', cta: 'Click here', desc: 'Global brands, social first thinking.' },
+    { id: 'loreal-paris', name: "L'Oréal Paris", img: '../assets/img/loreal-paris.gif', href: '../loreal-paris/', cta: 'Hop aboard!', desc: 'Beauty content built for the scroll.' },
+    { id: 'pepsico', name: 'PepsiCo', img: '../assets/img/pepsico.gif', href: '../pepsico/', cta: 'Line up', desc: 'Snacks, drinks and big swings.' },
+    { id: 'tinder', name: 'Tinder', img: '../assets/img/tinder.gif', href: '../tinder/', cta: 'Step right up', desc: 'A match made in the arcade.' },
+    { id: 'garnier', name: 'Garnier', img: '../assets/img/garnier.gif', href: '../garnier/', cta: 'Skip queue', desc: 'Fresh work, naturally.' },
+    { id: 'yolkpickl', name: 'Yolk Brands', img: '../assets/img/yolk-brands.webp', href: '../yolkpickl/', cta: 'Yum', desc: 'F&B with actual flavour.' },
+    { id: 'amexexamples', name: 'Amex', img: '../assets/img/amex.gif', href: '../amexexamples/', cta: 'Next up', desc: 'Premium, but make it human.' },
+    { id: 'monzo', name: 'Monzo', img: '../assets/img/monzo.gif', href: '../monzo/', cta: "It's showtime", desc: 'Hot coral, cool content.' },
+    { id: 'biotherm', name: 'Biotherm', img: '../assets/img/biotherm.gif', href: '../biotherm/', cta: 'Buckle up', desc: 'Skincare with depth.' },
+    { id: 'pampers', name: 'Pampers', img: '../assets/img/pampers.gif', href: '../pampers/', cta: 'Jump in', desc: 'Big feelings, tiny humans.' },
+    { id: 'lancome', name: 'Lancôme', img: '../assets/img/lancome.gif', href: '../lancome/', cta: "It's showtime", desc: 'Luxury that still smiles.' },
+    { id: 'dogs-trust', name: 'Dogs Trust', img: '../assets/img/dogs-trust.webp', href: '../dogs-trust/', cta: 'Click here', desc: 'Good dogs, good cause, good work.' },
+    { id: 'other', name: 'Mixed Bag', img: '../assets/img/other.gif', href: '../other/', cta: 'Hop in', desc: 'Everything that refused a category.' }
+  ];
+
+  var CAP_COLORS = ['hsl(16.6,64.9%,51.96%)', 'hsl(78.26,32.86%,27.45%)', 'hsl(330,55%,64%)', 'hsl(31.2,23.36%,20.98%)'];
+
+  var glass = document.getElementById('glass');
+  var rig = document.getElementById('rig');
+  var cable = document.getElementById('cable');
+  var claw = document.getElementById('claw');
+  var chute = document.getElementById('chute');
+  var toastEl = document.getElementById('toast');
+  var overlay = document.getElementById('overlay');
+  var dropBtn = document.getElementById('dropBtn');
+  var coin = document.getElementById('coin');
+
+  var state = 'idle';   // idle | drop | rise | carry | release | card
+  var rigX = 120;
+  var targetX = 120;
+  var cableLen = 74;
+  var held = null;
+  var wonSet = {};
+  var keys = {};
+  var capD = 92;
+  var glassW = 0, glassH = 0;
+  var capsules = [];
+
+  document.getElementById('totalCount').textContent = PRIZES.length;
+
+  /* bulbs */
+  (function () {
+    var n = Math.max(10, Math.floor(window.innerWidth / 70));
+    var frag = document.createDocumentFragment();
+    for (var i = 0; i < n; i++) {
+      var b = document.createElement('div');
+      b.className = 'bulb';
+      frag.appendChild(b);
+    }
+    document.getElementById('bulbs').appendChild(frag);
+  })();
+
+  /* ---------- audio ---------- */
+  var actx = null, muted = false;
+  function ac() {
+    if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+    return actx;
+  }
+  function tone(freq, dur, type, vol, when) {
+    var c = ac(); if (!c || muted) return;
+    var o = c.createOscillator(), g = c.createGain();
+    var t = c.currentTime + (when || 0);
+    o.type = type || 'square';
+    o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(vol || 0.05, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+  function sndDrop()  { tone(180, 0.5, 'sawtooth', 0.03); }
+  function sndGrab()  { tone(520, 0.08, 'square', 0.05); tone(700, 0.1, 'square', 0.05, 0.09); }
+  function sndWin()   { tone(660, 0.12, 'square', 0.05); tone(830, 0.12, 'square', 0.05, 0.12); tone(990, 0.22, 'square', 0.06, 0.24); }
+  function sndMiss()  { tone(300, 0.18, 'sawtooth', 0.045); tone(210, 0.3, 'sawtooth', 0.045, 0.16); }
+  function sndCoin()  { tone(920, 0.07, 'square', 0.05); tone(1240, 0.16, 'square', 0.05, 0.07); }
+
+  /* ---------- layout ---------- */
+  function seededJitter(i, salt) {
+    var x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  function layout() {
+    glassW = glass.clientWidth;
+    glassH = glass.clientHeight;
+    capD = Math.max(58, Math.min(112, glassW / 8.3));
+
+    chute.style.right = '6px';
+    var chuteW = chute.offsetWidth;
+    var usableW = glassW - chuteW - 26;
+
+    var perRow = Math.max(3, Math.floor(usableW / (capD * 0.94)));
+    capsules.forEach(function (c, i) {
+      var row = Math.floor(i / perRow);
+      var col = i % perRow;
+      var inRow = Math.min(perRow, capsules.length - row * perRow);
+      var rowW = inRow * capD * 0.94;
+      var startX = 14 + Math.max(0, (usableW - rowW) / 2);
+      var x = startX + col * capD * 0.94 + (row % 2 ? capD * 0.3 : 0) + seededJitter(i, 1) * 10;
+      var y = glassH - capD - 6 - row * capD * 0.55 - seededJitter(i, 2) * 8;
+      c.homeX = Math.min(x, glassW - chuteW - capD - 8);
+      c.homeY = y;
+      c.el.style.width = capD + 'px';
+      c.el.style.height = capD + 'px';
+      c.el.style.fontSize = (capD / 5.6) + 'px';
+      if (!c.heldNow && !c.gone) place(c, c.homeX, c.homeY, c.rot);
+    });
+
+    rigX = Math.min(rigX, glassW - 40);
+    targetX = Math.min(targetX, glassW - 40);
+  }
+
+  function place(c, x, y, rot) {
+    c.x = x; c.y = y;
+    c.el.style.transform = 'translate(' + x + 'px,' + y + 'px) rotate(' + (rot || 0) + 'deg)';
+  }
+
+  /* build capsules */
+  PRIZES.forEach(function (p, i) {
+    var el = document.createElement('div');
+    el.className = 'capsule' + (p.me ? ' me' : '');
+    var img = document.createElement('img');
+    img.src = p.img;
+    img.alt = p.name;
+    el.appendChild(img);
+    var cap = document.createElement('div');
+    cap.className = 'cap';
+    cap.textContent = p.me ? 'ME' : p.name;
+    if (!p.me) cap.style.background = CAP_COLORS[i % CAP_COLORS.length];
+    el.appendChild(cap);
+    glass.appendChild(el);
+    capsules.push({ prize: p, el: el, rot: (seededJitter(i, 3) - 0.5) * 24, homeX: 0, homeY: 0, x: 0, y: 0, gone: false, heldNow: false });
+  });
+
+  layout();
+  window.addEventListener('resize', layout);
+
+  /* ---------- rendering ---------- */
+  var lastT = 0, swing = 0, swingV = 0;
+  function frame(t) {
+    var dt = Math.min(0.05, (t - lastT) / 1000 || 0.016);
+    lastT = t;
+
+    if (state === 'idle') {
+      if (keys.left)  targetX -= 340 * dt;
+      if (keys.right) targetX += 340 * dt;
+      targetX = Math.max(30, Math.min(glassW - 30, targetX));
+      var prev = rigX;
+      rigX += (targetX - rigX) * Math.min(1, dt * 10);
+      swingV += (prev - rigX) * 0.9;
+    }
+    swingV += -swing * 14 * dt;
+    swingV *= (1 - Math.min(1, dt * 2.4));
+    swing += swingV * dt * 60 * 0.016 * 60;
+    swing = Math.max(-14, Math.min(14, swing));
+
+    rig.style.transform = 'translateX(' + rigX + 'px)';
+    cable.style.height = cableLen + 'px';
+    cable.style.transform = 'rotate(' + swing * 0.25 + 'deg)';
+    claw.style.top = cableLen - 4 + 'px';
+    claw.style.transform = 'rotate(' + swing * 0.4 + 'deg)';
+
+    if (held) {
+      var tip = clawTip();
+      place(held, tip.x - capD / 2, tip.y - capD * 0.15, swing * 0.5);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function clawTip() {
+    return { x: rigX, y: 14 + cableLen + 54 };
+  }
+
+  /* ---------- game flow ---------- */
+  function animateCable(to, speed, done) {
+    var from = cableLen;
+    var dur = Math.abs(to - from) / speed * 1000;
+    var t0 = performance.now();
+    (function step(t) {
+      var k = Math.min(1, (t - t0) / dur);
+      cableLen = from + (to - from) * k;
+      if (k < 1) requestAnimationFrame(step); else done && done();
+    })(t0);
+  }
+
+  function animateX(to, speed, done) {
+    var from = rigX;
+    var dur = Math.abs(to - from) / speed * 1000;
+    if (dur < 1) { done && done(); return; }
+    var t0 = performance.now();
+    (function step(t) {
+      var k = Math.min(1, (t - t0) / dur);
+      rigX = from + (to - from) * k;
+      if (k < 1) requestAnimationFrame(step); else done && done();
+    })(t0);
+  }
+
+  function drop() {
+    if (state !== 'idle') return;
+    state = 'drop';
+    coin.classList.remove('blink');
+    sndDrop();
+    claw.classList.remove('closed');
+    claw.classList.add('open');
+
+    animateCable(glassH - capD * 0.5 - 74, 300, function () {
+      var tip = clawTip();
+      var best = null, bestD = 1e9;
+      capsules.forEach(function (c) {
+        if (c.gone) return;
+        var d = Math.abs((c.x + capD / 2) - tip.x);
+        if (d < bestD) { bestD = d; best = c; }
+      });
+      var caught = best && bestD < capD * 0.62 ? best : null;
+
+      claw.classList.remove('open');
+      claw.classList.add('closed');
+
+      setTimeout(function () {
+        if (caught) {
+          sndGrab();
+          held = caught;
+          caught.heldNow = true;
+          caught.el.classList.add('held');
+          state = 'rise';
+          animateCable(74, 260, function () {
+            state = 'carry';
+            var chuteX = glassW - chute.offsetWidth / 2 - 6;
+            animateX(chuteX, 300, function () {
+              state = 'release';
+              claw.classList.remove('closed');
+              claw.classList.add('open');
+              var c = held; held = null;
+              fallIntoChute(c);
+            });
+          });
+        } else {
+          state = 'rise';
+          animateCable(74, 260, function () {
+            claw.classList.remove('closed');
+            claw.classList.add('open');
+            state = 'idle';
+            sndMiss();
+            toast('Came back empty. Classic claw machine. Credits are infinite, go again.');
+          });
+        }
+      }, 200);
+    });
+  }
+
+  function fallIntoChute(c) {
+    var vy = 0;
+    var t0 = performance.now(), last = t0;
+    (function step(t) {
+      var dt = Math.min(0.04, (t - last) / 1000); last = t;
+      vy += 2600 * dt;
+      place(c, c.x, c.y + vy * dt, c.rot);
+      if (c.y < glassH + capD) requestAnimationFrame(step);
+      else {
+        c.gone = true;
+        c.heldNow = false;
+        c.el.classList.remove('held');
+        c.el.classList.add('gone');
+        setTimeout(function () { showCard(c); }, 250);
+      }
+    })(t0);
+  }
+
+  function showCard(c) {
+    state = 'card';
+    sndWin();
+    var p = c.prize;
+    if (!wonSet[p.id]) {
+      wonSet[p.id] = true;
+      document.getElementById('wonCount').textContent = Object.keys(wonSet).length;
+    }
+    document.getElementById('cardKicker').textContent = p.me ? 'Grand prize' : 'You won';
+    document.getElementById('cardTitle').textContent = p.name;
+    document.getElementById('cardDesc').textContent = p.desc;
+    var media = document.getElementById('cardMedia');
+    media.classList.toggle('round', !!p.me);
+    document.getElementById('cardImg').src = p.img;
+    document.getElementById('cardImg').alt = p.name;
+    var go = document.getElementById('cardGo');
+    go.href = p.href;
+    go.textContent = p.cta;
+    overlay.classList.add('show');
+    overlay.dataset.capsule = capsules.indexOf(c);
+
+    if (Object.keys(wonSet).length === PRIZES.length) {
+      toast('You cleared the whole machine. The machine respects you.');
+    }
+  }
+
+  function closeCard() {
+    overlay.classList.remove('show');
+    var c = capsules[+overlay.dataset.capsule];
+    if (c) {
+      c.gone = false;
+      c.el.classList.remove('gone');
+      place(c, c.homeX, c.homeY, c.rot);
+    }
+    state = 'idle';
+  }
+
+  var toastTimer = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 3000);
+  }
+
+  /* ---------- input ---------- */
+  glass.addEventListener('pointermove', function (e) {
+    if (state !== 'idle') return;
+    var r = glass.getBoundingClientRect();
+    targetX = Math.max(30, Math.min(glassW - 30, e.clientX - r.left));
+  });
+  glass.addEventListener('pointerdown', function (e) {
+    if (state !== 'idle') return;
+    var r = glass.getBoundingClientRect();
+    targetX = Math.max(30, Math.min(glassW - 30, e.clientX - r.left));
+    if (e.pointerType === 'mouse') drop();
+  });
+  dropBtn.addEventListener('click', drop);
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') { keys.left = true; e.preventDefault(); }
+    if (e.key === 'ArrowRight') { keys.right = true; e.preventDefault(); }
+    if (e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (overlay.classList.contains('show')) return;
+      dropBtn.classList.add('pressed');
+      drop();
+    }
+    if (e.key === 'Escape' && overlay.classList.contains('show')) closeCard();
+  });
+  window.addEventListener('keyup', function (e) {
+    if (e.key === 'ArrowLeft') keys.left = false;
+    if (e.key === 'ArrowRight') keys.right = false;
+    if (e.key === ' ' || e.key === 'ArrowDown') dropBtn.classList.remove('pressed');
+  });
+
+  coin.addEventListener('click', function () {
+    sndCoin();
+    toast('Coin accepted. It was never needed. Play as much as you like.');
+  });
+
+  document.getElementById('cardBack').addEventListener('click', closeCard);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeCard(); });
+
+  /* welcome */
+  setTimeout(function () {
+    toast('Every prize in here is a real project. Grab one. Grab the human for the grand prize.');
+  }, 900);
+})();
+</script>
+</body>
+</html>
