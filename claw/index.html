@@ -265,7 +265,7 @@ body {
   filter: drop-shadow(0 6px 6px rgba(0,0,0,.14));
   will-change: transform;
 }
-.plush svg { display: block; width: 100%; height: 100%; }
+.plush img { display: block; width: 100%; height: 100%; object-fit: contain; }
 
 /* prizes */
 .capsule {
@@ -811,20 +811,13 @@ body {
     capsules.push({ prize: p, el: el, rot: (seededJitter(i, 3) - 0.5) * 24, homeX: 0, homeY: 0, x: 0, y: 0, gone: false, heldNow: false });
   });
 
-  var FACE = '<circle cx="42" cy="48" r="3.5" fill="#3a2a1a"/><circle cx="58" cy="48" r="3.5" fill="#3a2a1a"/><path d="M44 58 Q50 63 56 58" fill="none" stroke="#3a2a1a" stroke-width="3" stroke-linecap="round"/>';
-  var PLUSH_SHAPES = [
-    '<path d="M50 8 L61 36 L92 38 L68 57 L76 88 L50 71 L24 88 L32 57 L8 38 L39 36 Z" fill="FILL" stroke="FILL" stroke-width="12" stroke-linejoin="round"/>' + FACE,
-    '<path d="M50 86 C 22 64, 10 44, 18 30 C 26 16, 44 18, 50 32 C 56 18, 74 16, 82 30 C 90 44, 78 64, 50 86 Z" fill="FILL" stroke="FILL" stroke-width="8" stroke-linejoin="round"/>' + FACE,
-    '<path d="M22 62 C 12 34, 38 14, 54 22 C 78 12, 92 32, 84 50 C 94 68, 72 86, 52 80 C 34 90, 26 78, 22 62 Z" fill="FILL"/>' + FACE,
-    '<circle cx="30" cy="28" r="12" fill="FILL"/><circle cx="70" cy="28" r="12" fill="FILL"/><circle cx="50" cy="54" r="30" fill="FILL"/>' + FACE
-  ];
-  var PLUSH_COLORS = ['hsl(16.6,65%,58%)', 'hsl(330,55%,70%)', 'hsl(78,33%,36%)', '#f7e4c6', '#ffffff'];
+  var PLUSH_IMGS = ['toy-star', 'toy-heart', 'toy-bear', 'toy-duck', 'toy-flower', 'toy-cloud'];
   for (var pi = 0; pi < 16; pi++) {
     var pel = document.createElement('div');
     pel.className = 'plush';
-    pel.innerHTML = '<svg viewBox="0 0 100 100">' + PLUSH_SHAPES[pi % PLUSH_SHAPES.length].split('FILL').join(PLUSH_COLORS[pi % PLUSH_COLORS.length]) + '</svg>';
+    pel.innerHTML = '<img src="../assets/img/' + PLUSH_IMGS[pi % PLUSH_IMGS.length] + '.png" alt="">';
     glass.appendChild(pel);
-    plushes.push({ el: pel, xf: seededJitter(pi, 7), yf: seededJitter(pi, 8), size: 50 + seededJitter(pi, 9) * 46, rot: (seededJitter(pi, 10) - 0.5) * 40 });
+    plushes.push({ el: pel, xf: seededJitter(pi, 7), yf: seededJitter(pi, 8), size: 58 + seededJitter(pi, 9) * 52, rot: (seededJitter(pi, 10) - 0.5) * 34 });
   }
 
   layout();
