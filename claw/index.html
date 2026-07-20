@@ -36,7 +36,7 @@ body {
   text-transform: lowercase;
   letter-spacing: -0.02em;
   color: var(--ink);
-  background: var(--pink);
+  background: repeating-linear-gradient(90deg, var(--pink) 0 84px, hsl(330, 61%, 87%) 84px 168px);
 }
 body::after {
   content: "";
@@ -47,6 +47,45 @@ body::after {
   opacity: .05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* ---------- loader ---------- */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: repeating-linear-gradient(90deg, var(--pink) 0 84px, hsl(330, 61%, 87%) 84px 168px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .45s;
+}
+.loader.done { opacity: 0; pointer-events: none; }
+.lwrap { width: min(420px, 70vw); }
+.lbar {
+  height: 18px;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--white);
+}
+.lfill {
+  height: 100%;
+  width: 0;
+  border-radius: 8px;
+  background: repeating-linear-gradient(45deg, var(--accent) 0 14px, var(--ink) 14px 28px);
+  background-size: 40px 40px;
+  animation: lfill 1.05s ease-out .1s forwards, lmove .6s linear infinite;
+}
+@keyframes lfill { to { width: 100%; } }
+@keyframes lmove { to { background-position: 40px 0; } }
+.lcap {
+  text-align: right;
+  font-size: .7rem;
+  margin-top: 8px;
+  transform: rotate(-2deg);
+  transform-origin: right;
+}
+@media (prefers-reduced-motion: reduce) { .loader { display: none; } }
 
 /* ---------- top bar ---------- */
 .bar {
@@ -67,6 +106,7 @@ body::after {
   letter-spacing: .02em;
 }
 .bar a.corner:hover { text-decoration: underline; }
+.corner-r { transform: rotate(1.5deg); }
 .chipbar {
   pointer-events: auto;
   display: flex;
@@ -243,7 +283,7 @@ body::after {
 .plush {
   position: absolute;
   z-index: 2;
-  pointer-events: none;
+  cursor: pointer;
   filter: drop-shadow(0 5px 4px rgba(0,0,0,.12));
   will-change: transform;
 }
@@ -300,7 +340,7 @@ body::after {
 .chute .sign {
   position: absolute;
   top: -10px; left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotate(-2deg);
   font-family: var(--mono);
   font-weight: 500;
   font-size: .62rem;
@@ -529,6 +569,13 @@ body::after {
 </style>
 </head>
 <body>
+
+<div class="loader" id="loader">
+  <div class="lwrap">
+    <div class="lbar"><div class="lfill"></div></div>
+    <p class="lcap">now loading the pit&hellip;</p>
+  </div>
+</div>
 
 <nav class="bar">
   <a class="corner" href="../">&larr; the classic site</a>
@@ -764,6 +811,16 @@ body::after {
     pel.className = 'plush';
     pel.innerHTML = '<img src="../assets/img/' + PLUSH_IMGS[pi % PLUSH_IMGS.length] + '.png" alt="">';
     glass.appendChild(pel);
+    pel.addEventListener('pointerdown', function (e) {
+      e.stopPropagation();
+      var img = this.querySelector('img');
+      img.animate(
+        [{ transform: 'scale(1)' }, { transform: 'scale(.8, .72)' }, { transform: 'scale(1.1, 1.05)' }, { transform: 'scale(1)' }],
+        { duration: 420, easing: 'cubic-bezier(.3, 1.4, .4, 1)' }
+      );
+      tone(540, 0.07, 'sine', 0.06);
+      tone(820, 0.09, 'sine', 0.05, 0.055);
+    });
     plushes.push({ el: pel, xf: seededJitter(pi, 7), yf: seededJitter(pi, 8), size: 58 + seededJitter(pi, 9) * 52, rot: (seededJitter(pi, 10) - 0.5) * 34 });
   }
 
@@ -772,21 +829,24 @@ body::after {
   window.addEventListener('load', layout);
 
   /* boot choreography */
+  var loaderEl = document.getElementById('loader');
+  if (reduceMotion) { loaderEl.classList.add('done'); }
+  else { setTimeout(function () { loaderEl.classList.add('done'); }, 1250); }
   if (!reduceMotion) {
     cableLen = 8;
-    setTimeout(function () { animateCable(74, 150); }, 600);
+    setTimeout(function () { animateCable(74, 150); }, 1700);
     capsules.forEach(function (c, i) {
       c.el.animate(
         [{ transform: 'translate(' + c.homeX + 'px,' + (-140) + 'px) rotate(' + (c.rot * 3) + 'deg)', opacity: 0 },
          { transform: 'translate(' + c.homeX + 'px,' + c.homeY + 'px) rotate(' + c.rot + 'deg)', opacity: 1 }],
-        { duration: 650, delay: 250 + i * 55, easing: 'cubic-bezier(.2, .9, .3, 1.18)', fill: 'backwards' }
+        { duration: 650, delay: 1300 + i * 55, easing: 'cubic-bezier(.2, .9, .3, 1.18)', fill: 'backwards' }
       );
     });
     plushes.forEach(function (p, i) {
       p.el.animate(
         [{ opacity: 0, transform: p.el.style.transform + ' translateY(-60px)' },
          { opacity: 1, transform: p.el.style.transform }],
-        { duration: 500, delay: 150 + i * 35, easing: 'cubic-bezier(.2, .8, .3, 1.1)', fill: 'backwards' }
+        { duration: 500, delay: 1200 + i * 35, easing: 'cubic-bezier(.2, .8, .3, 1.1)', fill: 'backwards' }
       );
     });
   }
