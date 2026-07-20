@@ -152,7 +152,7 @@ body::after {
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: calc(clamp(40px, 6vh, 70px) + min(9.6vw, 9.2rem));
+  padding-top: clamp(84px, 11vh, 120px);
 }
 .giant {
   position: absolute;
@@ -177,107 +177,114 @@ body::after {
   to { opacity: 1; transform: none; }
 }
 
-/* ---------- machine ---------- */
-.machine {
+/* ---------- stage + cabinet ---------- */
+.stage {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
   position: relative;
   z-index: 1;
-  margin: 0 clamp(18px, 4vw, 64px) clamp(16px, 2.4vh, 30px);
-  background: var(--accent);
-  border: 2px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 5px 5px 0 var(--line);
-  padding: 0 clamp(10px, 1.4vw, 18px);
-  position: relative;
-  overflow: hidden;
-}
-.plate {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 12px 6px;
-  font-family: var(--mono);
-  font-weight: 500;
-  font-size: .72rem;
-  letter-spacing: .04em;
-  color: var(--white);
+  justify-content: center;
+  gap: clamp(18px, 3.5vw, 60px);
+  padding: 6px 16px 2px;
 }
-.plate .plate-r { font-weight: 400; opacity: .75; letter-spacing: .1em; }
-
-/* glass */
-.glass-frame {
-  flex: 1;
-  min-height: 300px;
-  border: 2px solid var(--line);
-  border-radius: 10px;
-  overflow: hidden;
-  position: relative;
-  background: var(--paper);
+.side {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  width: 200px;
 }
-.glass {
+@media (min-width: 920px) { .side { display: flex; } }
+.side-l { align-items: flex-start; }
+.side-r { align-items: flex-end; }
+.cab {
   position: relative;
   height: 100%;
-  background: var(--paper);
+  min-height: 0;
+  aspect-ratio: 540 / 780;
+  max-width: 92vw;
+}
+.cab-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 22px 34px rgba(32, 36, 15, .28));
+}
+.cab-marquee {
+  position: absolute;
+  left: 19%; top: 6.9%;
+  width: 62.6%; height: 7%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(.5rem, 1vw, .72rem);
+  letter-spacing: .14em;
+  color: var(--ink);
+  opacity: .85;
+  pointer-events: none;
+}
+.drop-real {
+  position: absolute;
+  left: 26.6%; top: 62%;
+  width: 11%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 5;
+}
+.drop-real:hover { box-shadow: 0 0 0 3px rgba(32, 36, 15, .25); }
+
+/* glass = chamber overlay */
+.glass {
+  position: absolute;
+  left: 19.4%; top: 19%;
+  width: 60.7%; height: 41.7%;
   overflow: hidden;
+  border-radius: 10px;
+  background: transparent;
   touch-action: none;
   cursor: crosshair;
 }
-.glass::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(114deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 22%, rgba(255,255,255,0) 100%);
-  pointer-events: none;
-  z-index: 30;
-}
 
 /* track + rig */
-.track {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 12px;
-  background: var(--line);
-  z-index: 5;
-}
+.track, .trolley { display: none; }
 .rig {
   position: absolute;
-  top: 12px;
+  top: 0;
   left: 0;
   z-index: 6;
   will-change: transform;
 }
-.trolley {
-  position: absolute;
-  top: -7px; left: -20px;
-  width: 40px; height: 14px;
-  border-radius: 4px;
-  background: var(--olive-dark);
-}
 .cable {
   position: absolute;
-  top: 0; left: -1.5px;
-  width: 3px;
-  background: var(--olive-dark);
+  top: 0; left: -1.25px;
+  width: 2.5px;
+  background: #b39a72;
   transform-origin: top center;
 }
 .claw {
   position: absolute;
-  left: -50px;
-  width: 100px;
-  height: 84px;
-  transform-origin: 50% 8px;
+  left: -45px;
+  width: 90px;
+  height: 106px;
+  transform-origin: 50% 6px;
 }
-.claw .prong {
-  transform-origin: 50px 16px;
-  transition: transform .18s ease;
+.claw img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top center;
+  opacity: 0;
+  transition: opacity .12s;
 }
-.claw.open .prong-l { transform: rotate(24deg); }
-.claw.open .prong-r { transform: rotate(-24deg); }
-.claw.closed .prong-l { transform: rotate(-6deg); }
-.claw.closed .prong-r { transform: rotate(6deg); }
+.claw.open img.c-open { opacity: 1; }
+.claw.closed img.c-closed { opacity: 1; }
 
 /* plush filler toys */
 .plush {
@@ -332,8 +339,8 @@ body::after {
 .chute {
   position: absolute;
   bottom: 0;
-  width: clamp(100px, 11vw, 140px);
-  height: 92px;
+  width: clamp(80px, 24%, 120px);
+  height: 78px;
   z-index: 4;
   pointer-events: none;
 }
@@ -358,20 +365,11 @@ body::after {
 @keyframes bounce { 50% { transform: translateY(4px); } }
 .chute .hole {
   position: absolute;
-  bottom: 0; left: 10px; right: 10px;
-  height: 58px;
-  background: var(--olive-dark);
-  border: 2px solid var(--line);
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
-}
-.chute .hole::after {
-  content: "";
-  position: absolute;
-  left: 12%; right: 12%; bottom: 8px;
-  height: 44%;
-  background: hsl(78, 30%, 10%);
-  border-radius: 4px;
+  bottom: 4px; left: 10px; right: 10px;
+  height: 46px;
+  background: transparent;
+  border: 1.5px dashed rgba(32, 36, 15, .4);
+  border-radius: 8px;
 }
 
 /* toast */
@@ -399,17 +397,7 @@ body::after {
 }
 .toast.show { opacity: 1; transform: translateX(-50%) scale(1); }
 
-/* deck */
-.deck {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin: clamp(8px, 1.2vh, 14px) 0 0;
-  padding: clamp(10px, 1.4vh, 16px) clamp(2px, .6vw, 10px);
-  border-top: 2px solid var(--line);
-}
-.deck-left { display: flex; gap: 10px; }
+/* field chips */
 .counter, .coin {
   text-transform: lowercase;
   background: var(--white);
@@ -437,12 +425,6 @@ body::after {
 }
 .coin.blink { animation: blink 1.2s steps(1) infinite; }
 @keyframes blink { 50% { opacity: .45; } }
-.deck-mid {
-  display: flex;
-  align-items: center;
-  gap: clamp(12px, 2vw, 26px);
-}
-.stick { display: none; }
 .drop-btn {
   text-transform: lowercase;
   font-family: var(--mono);
@@ -453,38 +435,41 @@ body::after {
   background: var(--ink);
   border: 2px solid var(--line);
   border-radius: 50%;
-  width: clamp(68px, 8vw, 86px);
-  height: clamp(68px, 8vw, 86px);
+  width: clamp(64px, 7vw, 80px);
+  height: clamp(64px, 7vw, 80px);
   cursor: pointer;
-  box-shadow: 3px 3px 0 var(--line);
+  box-shadow: 3px 3px 0 rgba(32, 36, 15, .35);
   transition: transform .07s, box-shadow .07s;
+  margin-top: 8px;
 }
 .drop-btn:hover { background: #3a3f22; }
 .drop-btn:active, .drop-btn.pressed {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--line);
+  box-shadow: 1px 1px 0 rgba(32, 36, 15, .35);
 }
 .hint {
-  display: none;
-  gap: clamp(12px, 1.6vw, 24px);
-  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--ink);
 }
-@media (min-width: 760px) { .hint { display: flex; } }
 .hint .tut {
-  max-width: 130px;
-  font-size: clamp(.58rem, .9vw, .66rem);
+  max-width: 170px;
+  font-size: clamp(.6rem, .95vw, .68rem);
   line-height: 1.5;
 }
 .hint .tut .ico { display: block; font-size: 1.05rem; margin-bottom: 3px; }
 .deck-note {
   text-align: center;
-  color: rgba(255,255,255,.8);
+  color: rgba(32, 36, 15, .6);
   font-family: var(--mono);
   font-size: clamp(.58rem, .9vw, .68rem);
-  letter-spacing: .04em;
-  padding: 0 12px clamp(10px, 1.6vh, 16px);
+  letter-spacing: .02em;
+  padding: 6px 12px 8px;
+  position: relative;
+  z-index: 1;
 }
-.deck-note a { color: var(--white); }
+.deck-note a { color: var(--ink); }
 
 /* ---------- prize card ---------- */
 .overlay {
@@ -592,65 +577,46 @@ body::after {
 <div class="scene">
   <h1 class="giant" aria-label="RaRa Land">rara land</h1>
 
-  <div class="machine">
-    <div class="plate"><span>the pit &middot; 13 clients + 1 creator</span><span class="plate-r">credits &infin; &middot; 14 prizes</span></div>
+  <div class="stage">
+    <div class="side side-l">
+      <div class="hint" id="hint">
+        <span class="tut"><span class="ico">&#128400;</span>drag to steer the claw.</span>
+        <span class="tut"><span class="ico">&#9757;</span>hit drop over a prize. all of it is real work.</span>
+        <span class="tut"><span class="ico">&#10084;</span>grab me to hire me.</span>
+      </div>
+    </div>
 
-    <div class="glass-frame">
+    <div class="cab">
+      <img class="cab-img" src="../assets/img/cab.png" alt="">
+      <span class="cab-marquee">rara land arcade</span>
       <div class="glass" id="glass">
-        <div class="track"></div>
-
         <div class="rig" id="rig">
           <div class="trolley"></div>
           <div class="cable" id="cable"></div>
-          <svg class="claw open" id="claw" viewBox="0 0 100 84">
-            <rect x="45" y="0" width="10" height="14" rx="3" fill="hsl(78,33%,18%)"/>
-            <defs>
-              <radialGradient id="hubg" cx="40%" cy="32%" r="85%">
-                <stop offset="0%" stop-color="hsl(78,25%,44%)"/>
-                <stop offset="100%" stop-color="hsl(78,33%,17%)"/>
-              </radialGradient>
-            </defs>
-            <g class="prong prong-l">
-              <path d="M50 16 C 26 20, 16 40, 22 64 C 24 71, 30 74, 36 72" fill="none" stroke="hsl(78,33%,27%)" stroke-width="9" stroke-linecap="round"/>
-              <path d="M50 15 C 28 19, 19 38, 24 60" fill="none" stroke="hsl(78,26%,41%)" stroke-width="3" stroke-linecap="round"/>
-            </g>
-            <g class="prong prong-r">
-              <path d="M50 16 C 74 20, 84 40, 78 64 C 76 71, 70 74, 64 72" fill="none" stroke="hsl(78,33%,27%)" stroke-width="9" stroke-linecap="round"/>
-              <path d="M50 15 C 72 19, 81 38, 76 60" fill="none" stroke="hsl(78,26%,41%)" stroke-width="3" stroke-linecap="round"/>
-            </g>
-            <circle cx="50" cy="16" r="10" fill="url(#hubg)"/>
-          </svg>
+          <div class="claw open" id="claw">
+            <img class="c-open" src="../assets/img/claw-open.png" alt="">
+            <img class="c-closed" src="../assets/img/claw-closed.png" alt="">
+          </div>
         </div>
-
         <div class="chute" id="chute">
-          <div class="sign">PRIZE</div>
-          <div class="arrow">▼</div>
+          <div class="sign">prize</div>
+          <div class="arrow">&#9660;</div>
           <div class="hole"></div>
         </div>
-
         <div class="toast" id="toast"></div>
       </div>
+      <button class="drop-real" id="dropReal" aria-label="drop the claw"></button>
     </div>
 
-    <div class="deck">
-      <div class="deck-left">
-        <button class="coin blink" id="coin"><span class="slot"></span>Credits <b>∞</b></button>
-        <button class="coin" id="muteBtn" aria-pressed="false">Sound on</button>
-      </div>
-      <div class="deck-mid">
-        <div class="stick" aria-hidden="true"></div>
-        <button class="drop-btn" id="dropBtn" aria-label="Drop the claw">DROP</button>
-          <div class="hint" id="hint">
-          <span class="tut"><span class="ico">&#128400;</span>drag to steer the claw.</span>
-          <span class="tut"><span class="ico">&#9757;</span>hit drop over a prize. all of it is real work.</span>
-          <span class="tut"><span class="ico">&#10084;</span>grab me to hire me.</span>
-        </div>
-      </div>
-      <div class="counter">Won <b id="wonCount">0</b> / <b id="totalCount">0</b></div>
+    <div class="side side-r">
+      <button class="coin blink" id="coin"><span class="slot"></span>credits <b>&infin;</b></button>
+      <button class="coin" id="muteBtn" aria-pressed="false">sound on</button>
+      <div class="counter">won <b id="wonCount">0</b> / <b id="totalCount">0</b></div>
+      <button class="drop-btn" id="dropBtn" aria-label="drop the claw">drop</button>
     </div>
-
-    <p class="deck-note">Somewhere in the pile is the person who made it. <a href="../">Classic version</a></p>
   </div>
+
+  <p class="deck-note">somewhere in the pile is the person who made it. <a href="../">classic version</a></p>
 </div>
 
 <div class="overlay" id="overlay">
@@ -702,7 +668,7 @@ body::after {
   var state = 'idle';   // idle | drop | rise | carry | release | card
   var rigX = 120;
   var targetX = 120;
-  var cableLen = 74;
+  var cableLen = 46;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var held = null;
   var wonSet = {};
@@ -746,7 +712,7 @@ body::after {
   function layout() {
     glassW = glass.clientWidth;
     glassH = glass.clientHeight;
-    capD = Math.max(64, Math.min(132, glassW / 7.5));
+    capD = Math.max(40, Math.min(88, glassW / 7));
 
     chute.style.right = '6px';
     var chuteW = chute.offsetWidth;
@@ -806,7 +772,7 @@ body::after {
   });
 
   var PLUSH_IMGS = ['toy-star', 'toy-heart', 'toy-bear', 'toy-duck', 'toy-flower', 'toy-cloud'];
-  for (var pi = 0; pi < 16; pi++) {
+  for (var pi = 0; pi < 10; pi++) {
     var pel = document.createElement('div');
     pel.className = 'plush';
     pel.innerHTML = '<img src="../assets/img/' + PLUSH_IMGS[pi % PLUSH_IMGS.length] + '.png" alt="">';
@@ -834,7 +800,7 @@ body::after {
   else { setTimeout(function () { loaderEl.classList.add('done'); }, 1250); }
   if (!reduceMotion) {
     cableLen = 8;
-    setTimeout(function () { animateCable(74, 150); }, 1700);
+    setTimeout(function () { animateCable(46, 150); }, 1700);
     capsules.forEach(function (c, i) {
       c.el.animate(
         [{ transform: 'translate(' + c.homeX + 'px,' + (-140) + 'px) rotate(' + (c.rot * 3) + 'deg)', opacity: 0 },
@@ -885,7 +851,7 @@ body::after {
   requestAnimationFrame(frame);
 
   function clawTip() {
-    return { x: rigX, y: 14 + cableLen + 54 };
+    return { x: rigX, y: cableLen + 88 };
   }
 
   /* ---------- game flow ---------- */
@@ -920,7 +886,7 @@ body::after {
     claw.classList.remove('closed');
     claw.classList.add('open');
 
-    animateCable(glassH - capD * 0.5 - 74, 300, function () {
+    animateCable(Math.max(10, glassH - capD * 0.5 - 96), 300, function () {
       var tip = clawTip();
       var best = null, bestD = 1e9;
       capsules.forEach(function (c) {
@@ -940,7 +906,7 @@ body::after {
           caught.heldNow = true;
           caught.el.classList.add('held');
           state = 'rise';
-          animateCable(74, 260, function () {
+          animateCable(46, 260, function () {
             state = 'carry';
             var chuteX = glassW - chute.offsetWidth / 2 - 6;
             animateX(chuteX, 300, function () {
@@ -953,7 +919,7 @@ body::after {
           });
         } else {
           state = 'rise';
-          animateCable(74, 260, function () {
+          animateCable(46, 260, function () {
             claw.classList.remove('closed');
             claw.classList.add('open');
             state = 'idle';
@@ -1058,6 +1024,7 @@ body::after {
     if (e.pointerType === 'mouse') drop();
   });
   dropBtn.addEventListener('click', drop);
+  document.getElementById('dropReal').addEventListener('click', drop);
 
   window.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowLeft') { keys.left = true; e.preventDefault(); }
