@@ -152,11 +152,11 @@ body::after {
   display: flex;
   flex-direction: column;
   position: relative;
-  padding-top: clamp(110px, 17vh, 190px);
+  padding-top: calc(clamp(40px, 6vh, 70px) + min(9.6vw, 9.2rem));
 }
 .giant {
   position: absolute;
-  top: clamp(44px, 6.5vh, 74px);
+  top: clamp(38px, 5.6vh, 64px);
   left: 0; right: 0;
   z-index: 0;
   text-align: center;
