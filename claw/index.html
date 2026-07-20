@@ -7,7 +7,7 @@
 <meta name="description" content="A fully playable portfolio. Drive the claw, win a project.">
 <link rel="icon" href="../assets/img/favicon.ico">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
 :root {
   --accent: hsl(16.6, 64.9%, 51.96%);
@@ -19,6 +19,7 @@
   --brown: hsl(31.2, 23.36%, 20.98%);
   --white: #fff;
   --font: "Fredoka", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -62,48 +63,37 @@ body {
 
 /* ---------- scene ---------- */
 .scene {
-  min-height: 100svh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  background:
-    radial-gradient(120% 90% at 50% 0%, hsl(31.2, 23.36%, 27%) 0%, var(--brown) 60%),
-    var(--brown);
-  padding: 86px 12px 0;
 }
-
-.scene-kicker {
-  color: var(--pink);
-  font-size: clamp(.95rem, 1.6vw, 1.15rem);
-  margin-bottom: 6px;
-  opacity: .85;
-}
-.scene-title {
-  color: var(--white);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  font-size: clamp(1.6rem, 4vw, 2.6rem);
-  text-align: center;
-  margin-bottom: 18px;
-}
-.scene-title .pink { color: var(--pink); }
 
 /* ---------- machine ---------- */
 .machine {
-  width: min(1240px, 100%);
-  border-radius: 26px 26px 0 0;
-  background: var(--accent);
-  box-shadow:
-    0 -8px 0 0 var(--accent-dark) inset,
-    0 30px 80px rgba(0,0,0,.5);
-  padding: 0 clamp(10px, 1.6vw, 22px);
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.16) 0%, rgba(0,0,0,0) 5%, rgba(0,0,0,0) 95%, rgba(0,0,0,.16) 100%),
+    var(--accent);
+  padding: 0 clamp(12px, 2vw, 30px);
   position: relative;
+}
+.machine::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* marquee */
 .mq {
-  padding: clamp(12px, 1.8vw, 20px) 8px clamp(10px, 1.4vw, 16px);
+  padding: clamp(52px, 7vh, 74px) 8px clamp(10px, 1.6vh, 18px);
   text-align: center;
   position: relative;
 }
@@ -111,11 +101,20 @@ body {
   color: var(--white);
   font-weight: 600;
   letter-spacing: -0.04em;
-  font-size: clamp(1.7rem, 4.6vw, 3.2rem);
+  font-size: clamp(2rem, 5.4vw, 4rem);
   line-height: 1;
-  text-shadow: 0 3px 0 var(--accent-dark);
+  text-shadow: 0 4px 0 var(--accent-dark);
 }
 .mq h1 span { color: var(--pink); }
+.mq .sub {
+  color: var(--pink);
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(.68rem, 1.1vw, .82rem);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
 .bulbs {
   display: flex;
   justify-content: center;
@@ -135,6 +134,8 @@ body {
 
 /* glass */
 .glass-frame {
+  flex: 1;
+  min-height: 300px;
   border: clamp(8px, 1vw, 12px) solid var(--accent-dark);
   border-radius: 18px;
   overflow: hidden;
@@ -143,7 +144,7 @@ body {
 }
 .glass {
   position: relative;
-  height: clamp(380px, 52svh, 560px);
+  height: 100%;
   background:
     linear-gradient(180deg, var(--pink) 0%, var(--pink-deep) 100%);
   overflow: hidden;
@@ -156,18 +157,19 @@ body {
   inset: 0;
   background:
     linear-gradient(180deg, rgba(0,0,0,0) 82%, rgba(0,0,0,.10) 100%),
-    linear-gradient(115deg, rgba(255,255,255,.28) 0%, rgba(255,255,255,0) 26%, rgba(255,255,255,0) 68%, rgba(255,255,255,.14) 100%);
+    linear-gradient(105deg, transparent 26%, rgba(255,255,255,.14) 28%, rgba(255,255,255,0) 34%, transparent 58%, rgba(255,255,255,.09) 60%, transparent 65%),
+    linear-gradient(115deg, rgba(255,255,255,.24) 0%, rgba(255,255,255,0) 24%, rgba(255,255,255,0) 70%, rgba(255,255,255,.12) 100%);
   pointer-events: none;
   z-index: 30;
 }
 .wall-word {
   position: absolute;
-  top: 16%;
+  top: 13%;
   left: 0; right: 0;
   text-align: center;
   font-weight: 600;
   letter-spacing: -0.03em;
-  font-size: clamp(2rem, 6vw, 4.6rem);
+  font-size: clamp(2.2rem, 7vw, 6rem);
   color: hsl(330, 45%, 72%);
   opacity: .55;
   z-index: 1;
@@ -177,10 +179,12 @@ body {
 }
 .wall-word small {
   display: block;
-  font-size: .32em;
-  letter-spacing: .3em;
+  font-family: var(--mono);
+  font-size: .2em;
+  letter-spacing: .34em;
   font-weight: 500;
-  margin-top: 6px;
+  text-transform: uppercase;
+  margin-top: 10px;
 }
 
 /* track + rig */
@@ -253,10 +257,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--mono);
   font-weight: 600;
-  letter-spacing: .01em;
+  letter-spacing: .02em;
   color: var(--white);
-  font-size: .62em;
+  font-size: .5em;
   text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
@@ -270,15 +275,15 @@ body {
 .chute {
   position: absolute;
   bottom: 0;
-  width: 108px;
-  height: 86px;
+  width: clamp(100px, 11vw, 140px);
+  height: 96px;
   z-index: 4;
   pointer-events: none;
 }
 .chute .hole {
   position: absolute;
   bottom: 0; left: 10px; right: 10px;
-  height: 56px;
+  height: 64px;
   background: var(--olive-dark);
   border-radius: 14px 14px 0 0;
   box-shadow: inset 0 10px 16px rgba(0,0,0,.55);
@@ -288,9 +293,10 @@ body {
   top: -6px; left: 0; right: 0;
   text-align: center;
   color: var(--olive-dark);
+  font-family: var(--mono);
   font-weight: 600;
-  font-size: .7rem;
-  letter-spacing: .12em;
+  font-size: .68rem;
+  letter-spacing: .18em;
 }
 .chute .arrow {
   position: absolute;
@@ -329,14 +335,24 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: clamp(12px, 1.6vw, 20px) clamp(6px, 1vw, 14px) clamp(16px, 2vw, 26px);
+  padding: clamp(10px, 1.4vh, 18px) clamp(6px, 1vw, 14px) 0;
 }
+.deck-note {
+  text-align: center;
+  color: hsla(330, 61%, 90%, .75);
+  font-family: var(--mono);
+  font-size: clamp(.62rem, 1vw, .74rem);
+  letter-spacing: .02em;
+  padding: clamp(6px, 1vh, 12px) 12px clamp(10px, 1.6vh, 18px);
+}
+.deck-note a { color: var(--white); }
 .counter {
   background: var(--olive-dark);
   color: var(--pink);
   border-radius: 10px;
   padding: 8px 14px;
-  font-size: clamp(.72rem, 1.3vw, .95rem);
+  font-family: var(--mono);
+  font-size: clamp(.68rem, 1.2vw, .85rem);
   letter-spacing: .14em;
   font-weight: 600;
   text-transform: uppercase;
@@ -400,7 +416,9 @@ body {
 .hint {
   color: var(--white);
   opacity: .85;
-  font-size: clamp(.8rem, 1.4vw, .95rem);
+  font-family: var(--mono);
+  font-size: clamp(.64rem, 1vw, .74rem);
+  line-height: 1.5;
   max-width: 240px;
   text-align: left;
   display: none;
@@ -412,14 +430,14 @@ body {
   border-radius: 10px;
   padding: 8px 14px;
   color: var(--pink);
-  font-size: clamp(.72rem, 1.3vw, .95rem);
+  font-family: var(--mono);
+  font-size: clamp(.68rem, 1.2vw, .85rem);
   letter-spacing: .14em;
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
   box-shadow: inset 0 3px 8px rgba(0,0,0,.6);
   border: none;
-  font-family: var(--font);
   white-space: nowrap;
 }
 .coin .slot {
@@ -432,15 +450,6 @@ body {
   box-shadow: 0 0 0 2px rgba(255,255,255,.15);
 }
 .coin.blink { animation: blink 1s steps(1) infinite; }
-
-/* footnote */
-.footnote {
-  color: hsla(330, 61%, 84%, .6);
-  text-align: center;
-  font-size: .85rem;
-  padding: 18px 16px 26px;
-}
-.footnote a { color: var(--pink); }
 
 /* ---------- prize card ---------- */
 .overlay {
@@ -470,10 +479,11 @@ body {
 .overlay.show .card { transform: translateY(0) scale(1); }
 .card .won {
   color: var(--accent);
+  font-family: var(--mono);
   font-weight: 600;
-  letter-spacing: .2em;
+  letter-spacing: .24em;
   text-transform: uppercase;
-  font-size: .8rem;
+  font-size: .72rem;
 }
 .card .media {
   width: min(230px, 60vw);
@@ -532,12 +542,10 @@ body {
 </nav>
 
 <div class="scene">
-  <p class="scene-kicker">Welcome to</p>
-  <h1 class="scene-title">RaRa Land<span class="pink">.</span> A portfolio you play<span class="pink">.</span></h1>
-
   <div class="machine">
     <div class="mq">
       <h1>RARA <span>LAND</span></h1>
+      <p class="sub">A portfolio you play. Every prize is real work.</p>
       <div class="bulbs" id="bulbs"></div>
     </div>
 
@@ -581,9 +589,9 @@ body {
       </div>
       <div class="counter">Won <b id="wonCount">0</b> / <b id="totalCount">0</b></div>
     </div>
-  </div>
 
-  <p class="footnote">You always win here. This is a portfolio, not Vegas. Somewhere in the pile is the person who made it. <a href="../">Classic version</a></p>
+    <p class="deck-note">You always win here. This is a portfolio, not Vegas. Somewhere in the pile is the person who made it. <a href="../">Classic version</a></p>
+  </div>
 </div>
 
 <div class="overlay" id="overlay">
@@ -606,7 +614,7 @@ body {
   var PRIZES = [
     { id: 'me', name: 'The Creator', img: '../assets/img/rania-face.png', href: '../contact/', cta: 'Hire her', kicker: 'Grand prize', desc: 'You got the girl who makes all of this. Strategy, creative direction, AI content. She is, conveniently, available.', me: true },
     { id: 'unilever', name: 'Unilever', img: '../assets/img/unilever.webp', href: '../unilever/', cta: 'Click here', desc: 'Global brands, social first thinking.' },
-    { id: 'loreal-paris', name: "L'Oréal Paris", img: '../assets/img/loreal-paris.gif', href: '../loreal-paris/', cta: 'Hop aboard!', desc: 'Beauty content built for the scroll.' },
+    { id: 'loreal-paris', name: "L'Oréal Paris", short: "L'Oréal", img: '../assets/img/loreal-paris.gif', href: '../loreal-paris/', cta: 'Hop aboard!', desc: 'Beauty content built for the scroll.' },
     { id: 'pepsico', name: 'PepsiCo', img: '../assets/img/pepsico.gif', href: '../pepsico/', cta: 'Line up', desc: 'Snacks, drinks and big swings.' },
     { id: 'tinder', name: 'Tinder', img: '../assets/img/tinder.gif', href: '../tinder/', cta: 'Step right up', desc: 'A match made in the arcade.' },
     { id: 'garnier', name: 'Garnier', img: '../assets/img/garnier.gif', href: '../garnier/', cta: 'Skip queue', desc: 'Fresh work, naturally.' },
@@ -689,7 +697,7 @@ body {
   function layout() {
     glassW = glass.clientWidth;
     glassH = glass.clientHeight;
-    capD = Math.max(58, Math.min(112, glassW / 8.3));
+    capD = Math.max(64, Math.min(132, glassW / 7.5));
 
     chute.style.right = '6px';
     var chuteW = chute.offsetWidth;
@@ -731,7 +739,7 @@ body {
     el.appendChild(img);
     var cap = document.createElement('div');
     cap.className = 'cap';
-    cap.textContent = p.me ? 'ME' : p.name;
+    cap.textContent = p.me ? 'ME' : (p.short || p.name);
     if (!p.me) cap.style.background = CAP_COLORS[i % CAP_COLORS.length];
     el.appendChild(cap);
     glass.appendChild(el);
@@ -740,6 +748,7 @@ body {
 
   layout();
   window.addEventListener('resize', layout);
+  window.addEventListener('load', layout);
 
   /* ---------- rendering ---------- */
   var lastT = 0, swing = 0, swingV = 0;
