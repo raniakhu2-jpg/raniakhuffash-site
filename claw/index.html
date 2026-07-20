@@ -149,22 +149,21 @@ body::after {
 /* ---------- giant lettering ---------- */
 .scene {
   height: 100svh;
-  display: flex;
-  flex-direction: column;
   position: relative;
-  padding-top: clamp(84px, 11vh, 120px);
+  overflow: hidden;
 }
 .giant {
   position: absolute;
-  top: clamp(38px, 5.6vh, 64px);
+  top: clamp(56px, 9vh, 110px);
   left: 0; right: 0;
-  z-index: 0;
+  z-index: 1;
   text-align: center;
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(4.2rem, 14.5vw, 13.5rem);
+  font-size: clamp(4.2rem, 13.5vw, 12.5rem);
   line-height: .8;
-  color: var(--white);
+  color: var(--accent);
+  opacity: .92;
   letter-spacing: -0.01em;
   pointer-events: none;
   user-select: none;
@@ -179,75 +178,42 @@ body::after {
 
 /* ---------- stage + cabinet ---------- */
 .stage {
-  flex: 1;
-  min-height: 0;
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(18px, 3.5vw, 60px);
-  padding: 6px 16px 2px;
+  position: absolute;
+  inset: 0;
+}
+.room-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
 }
 .side {
   display: none;
   flex-direction: column;
   gap: 10px;
-  width: 200px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
 }
 @media (min-width: 920px) { .side { display: flex; } }
-.side-l { align-items: flex-start; }
-.side-r { align-items: flex-end; }
-.cab {
-  position: relative;
-  height: 100%;
-  min-height: 0;
-  aspect-ratio: 540 / 780;
-  max-width: 92vw;
-}
-.cab-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 22px 34px rgba(32, 36, 15, .28));
-}
-.cab-marquee {
-  position: absolute;
-  left: 19%; top: 6.9%;
-  width: 62.6%; height: 7%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: clamp(.5rem, 1vw, .72rem);
-  letter-spacing: .14em;
-  color: var(--ink);
-  opacity: .85;
-  pointer-events: none;
-}
-.drop-real {
-  position: absolute;
-  left: 26.6%; top: 62%;
-  width: 11%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 5;
-}
-.drop-real:hover { box-shadow: 0 0 0 3px rgba(32, 36, 15, .25); }
+.side-l { left: clamp(10px, 1.8vw, 30px); align-items: flex-start; }
+.side-r { right: clamp(10px, 1.8vw, 30px); align-items: flex-end; }
 
 /* glass = chamber overlay */
 .glass {
   position: absolute;
-  left: 19.4%; top: 19%;
-  width: 60.7%; height: 41.7%;
+  left: 15%;
+  width: 70.5%;
+  top: 0;
+  bottom: 9.5%;
   overflow: hidden;
-  border-radius: 10px;
   background: transparent;
   touch-action: none;
   cursor: crosshair;
+  z-index: 2;
 }
 
 /* track + rig */
@@ -268,9 +234,9 @@ body::after {
 }
 .claw {
   position: absolute;
-  left: -45px;
-  width: 90px;
-  height: 106px;
+  left: -56px;
+  width: 112px;
+  height: 132px;
   transform-origin: 50% 6px;
 }
 .claw img {
@@ -465,9 +431,10 @@ body::after {
   font-family: var(--mono);
   font-size: clamp(.58rem, .9vw, .68rem);
   letter-spacing: .02em;
-  padding: 6px 12px 8px;
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  left: 0; right: 0;
+  bottom: clamp(8px, 1.6vh, 20px);
+  z-index: 3;
 }
 .deck-note a { color: var(--ink); }
 
@@ -578,34 +545,31 @@ body::after {
   <h1 class="giant" aria-label="RaRa Land">rara land</h1>
 
   <div class="stage">
+    <img class="room-bg" src="../assets/img/room.png" alt="">
+
+    <div class="glass" id="glass">
+      <div class="rig" id="rig">
+        <div class="trolley"></div>
+        <div class="cable" id="cable"></div>
+        <div class="claw open" id="claw">
+          <img class="c-open" src="../assets/img/claw-open.png" alt="">
+          <img class="c-closed" src="../assets/img/claw-closed.png" alt="">
+        </div>
+      </div>
+      <div class="chute" id="chute">
+        <div class="sign">prize</div>
+        <div class="arrow">&#9660;</div>
+        <div class="hole"></div>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+
     <div class="side side-l">
       <div class="hint" id="hint">
         <span class="tut"><span class="ico">&#128400;</span>drag to steer the claw.</span>
         <span class="tut"><span class="ico">&#9757;</span>hit drop over a prize. all of it is real work.</span>
         <span class="tut"><span class="ico">&#10084;</span>grab me to hire me.</span>
       </div>
-    </div>
-
-    <div class="cab">
-      <img class="cab-img" src="../assets/img/cab.png" alt="">
-      <span class="cab-marquee">rara land arcade</span>
-      <div class="glass" id="glass">
-        <div class="rig" id="rig">
-          <div class="trolley"></div>
-          <div class="cable" id="cable"></div>
-          <div class="claw open" id="claw">
-            <img class="c-open" src="../assets/img/claw-open.png" alt="">
-            <img class="c-closed" src="../assets/img/claw-closed.png" alt="">
-          </div>
-        </div>
-        <div class="chute" id="chute">
-          <div class="sign">prize</div>
-          <div class="arrow">&#9660;</div>
-          <div class="hole"></div>
-        </div>
-        <div class="toast" id="toast"></div>
-      </div>
-      <button class="drop-real" id="dropReal" aria-label="drop the claw"></button>
     </div>
 
     <div class="side side-r">
@@ -668,7 +632,7 @@ body::after {
   var state = 'idle';   // idle | drop | rise | carry | release | card
   var rigX = 120;
   var targetX = 120;
-  var cableLen = 46;
+  var cableLen = 74;
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var held = null;
   var wonSet = {};
@@ -712,7 +676,7 @@ body::after {
   function layout() {
     glassW = glass.clientWidth;
     glassH = glass.clientHeight;
-    capD = Math.max(40, Math.min(88, glassW / 7));
+    capD = Math.max(52, Math.min(118, glassW / 7.5));
 
     chute.style.right = '6px';
     var chuteW = chute.offsetWidth;
@@ -772,7 +736,7 @@ body::after {
   });
 
   var PLUSH_IMGS = ['toy-star', 'toy-heart', 'toy-bear', 'toy-duck', 'toy-flower', 'toy-cloud'];
-  for (var pi = 0; pi < 10; pi++) {
+  for (var pi = 0; pi < 14; pi++) {
     var pel = document.createElement('div');
     pel.className = 'plush';
     pel.innerHTML = '<img src="../assets/img/' + PLUSH_IMGS[pi % PLUSH_IMGS.length] + '.png" alt="">';
@@ -800,7 +764,7 @@ body::after {
   else { setTimeout(function () { loaderEl.classList.add('done'); }, 1250); }
   if (!reduceMotion) {
     cableLen = 8;
-    setTimeout(function () { animateCable(46, 150); }, 1700);
+    setTimeout(function () { animateCable(74, 150); }, 1700);
     capsules.forEach(function (c, i) {
       c.el.animate(
         [{ transform: 'translate(' + c.homeX + 'px,' + (-140) + 'px) rotate(' + (c.rot * 3) + 'deg)', opacity: 0 },
@@ -851,7 +815,7 @@ body::after {
   requestAnimationFrame(frame);
 
   function clawTip() {
-    return { x: rigX, y: cableLen + 88 };
+    return { x: rigX, y: cableLen + 106 };
   }
 
   /* ---------- game flow ---------- */
@@ -886,7 +850,7 @@ body::after {
     claw.classList.remove('closed');
     claw.classList.add('open');
 
-    animateCable(Math.max(10, glassH - capD * 0.5 - 96), 300, function () {
+    animateCable(Math.max(10, glassH - capD * 0.5 - 118), 300, function () {
       var tip = clawTip();
       var best = null, bestD = 1e9;
       capsules.forEach(function (c) {
@@ -906,7 +870,7 @@ body::after {
           caught.heldNow = true;
           caught.el.classList.add('held');
           state = 'rise';
-          animateCable(46, 260, function () {
+          animateCable(74, 260, function () {
             state = 'carry';
             var chuteX = glassW - chute.offsetWidth / 2 - 6;
             animateX(chuteX, 300, function () {
@@ -919,7 +883,7 @@ body::after {
           });
         } else {
           state = 'rise';
-          animateCable(46, 260, function () {
+          animateCable(74, 260, function () {
             claw.classList.remove('closed');
             claw.classList.add('open');
             state = 'idle';
@@ -1024,7 +988,6 @@ body::after {
     if (e.pointerType === 'mouse') drop();
   });
   dropBtn.addEventListener('click', drop);
-  document.getElementById('dropReal').addEventListener('click', drop);
 
   window.addEventListener('keydown', function (e) {
     if (e.key === 'ArrowLeft') { keys.left = true; e.preventDefault(); }
