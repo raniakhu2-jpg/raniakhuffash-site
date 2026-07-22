@@ -154,16 +154,17 @@ body::after {
 }
 .giant {
   position: absolute;
-  top: clamp(56px, 9vh, 110px);
-  left: 0; right: 0;
+  top: clamp(80px, 22vh, 240px);
+  left: 15%; width: 70.5%;
   z-index: 1;
   text-align: center;
   font-family: var(--display);
   font-weight: 400;
-  font-size: clamp(4.2rem, 13.5vw, 12.5rem);
+  font-size: clamp(3.6rem, 11vw, 10.5rem);
   line-height: .8;
   color: var(--accent);
-  opacity: .92;
+  opacity: .85;
+  mix-blend-mode: multiply;
   letter-spacing: -0.01em;
   pointer-events: none;
   user-select: none;
@@ -542,10 +543,9 @@ body::after {
 </nav>
 
 <div class="scene">
-  <h1 class="giant" aria-label="RaRa Land">rara land</h1>
-
   <div class="stage">
     <img class="room-bg" src="../assets/img/room.png" alt="">
+    <h1 class="giant" aria-label="RaRa Land">rara land</h1>
 
     <div class="glass" id="glass">
       <div class="rig" id="rig">
