@@ -638,7 +638,28 @@ body::after {
   var wonSet = {};
   var keys = {};
   var capD = 92;
+  var clawW = 112, clawH = 132;
   var glassW = 0, glassH = 0;
+  var sceneEl = document.querySelector('.scene');
+  var giantEl = document.querySelector('.giant');
+  /* chamber rectangle measured in room.png pixels (natural 1490x1037) */
+  var ROOM = { w: 1490, h: 1037, x1: 185, x2: 1295, floor: 868 };
+  function fitRoom() {
+    var W = sceneEl.clientWidth, H = sceneEl.clientHeight;
+    var s = Math.max(W / ROOM.w, H / ROOM.h);
+    var ox = (W - ROOM.w * s) / 2;
+    var oy = H - ROOM.h * s;
+    var gx = ox + ROOM.x1 * s;
+    var gw = (ROOM.x2 - ROOM.x1) * s;
+    var gh = oy + ROOM.floor * s;
+    glass.style.left = gx + 'px';
+    glass.style.width = gw + 'px';
+    glass.style.top = '0px';
+    glass.style.height = gh + 'px';
+    glass.style.bottom = 'auto';
+    giantEl.style.left = gx + 'px';
+    giantEl.style.width = gw + 'px';
+  }
   var capsules = [];
   var plushes = [];
 
@@ -674,9 +695,16 @@ body::after {
   }
 
   function layout() {
+    fitRoom();
     glassW = glass.clientWidth;
     glassH = glass.clientHeight;
     capD = Math.max(52, Math.min(118, glassW / 7.5));
+
+    clawW = Math.max(120, Math.min(230, glassW * 0.17));
+    clawH = clawW * (132 / 112);
+    claw.style.width = clawW + 'px';
+    claw.style.height = clawH + 'px';
+    claw.style.left = (-clawW / 2) + 'px';
 
     chute.style.right = '6px';
     var chuteW = chute.offsetWidth;
@@ -815,7 +843,7 @@ body::after {
   requestAnimationFrame(frame);
 
   function clawTip() {
-    return { x: rigX, y: cableLen + 106 };
+    return { x: rigX, y: cableLen + clawH * 0.8 };
   }
 
   /* ---------- game flow ---------- */
@@ -850,7 +878,7 @@ body::after {
     claw.classList.remove('closed');
     claw.classList.add('open');
 
-    animateCable(Math.max(10, glassH - capD * 0.5 - 118), 300, function () {
+    animateCable(Math.max(10, glassH - capD * 0.5 - clawH * 0.894), 300, function () {
       var tip = clawTip();
       var best = null, bestD = 1e9;
       capsules.forEach(function (c) {
